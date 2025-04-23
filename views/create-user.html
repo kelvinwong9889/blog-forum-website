@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>創建用戶</title>
+    <link rel="stylesheet" href="/public/css/styles.css">
+</head>
+
+<body data-page="create-user">
+    <div class="container">
+        <h1>創建用戶</h1>
+        <form id="create-user-form">
+            <input type="text" name="username" placeholder="用戶名" required>
+            <input type="email" name="email" placeholder="電子郵件" required>
+            <input type="password" name="password" placeholder="密碼" required>
+            <input type="text" name="avatar" placeholder="頭像 URL（可選）">
+            <button type="submit">創建用戶</button>
+        </form>
+        <a href="/index.html">返回主頁</a>
+    </div>
+    <script type="module" src="/public/js/main.js"></script>
+</body>
+
+</html>

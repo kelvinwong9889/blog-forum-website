@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>創建帖子</title>
+    <link rel="stylesheet" href="/public/css/styles.css">
+</head>
+
+<body data-page="create-post">
+    <div class="container">
+        <h1>創建帖子</h1>
+        <form id="create-post-form">
+            <input type="text" name="title" placeholder="標題" required>
+            <textarea name="content" placeholder="內容" required></textarea>
+            <input type="text" name="user_id" placeholder="用戶 ID" required>
+            <input type="text" name="category_id" placeholder="分類 ID" required>
+            <button type="submit">創建帖子</button>
+        </form>
+        <a href="/index.html">返回主頁</a>
+    </div>
+    <script type="module" src="/public/js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>博客論壇</title>
+    <link rel="stylesheet" href="/public/css/styles.css">
+</head>
+<body data-page="index">
+    <div class="container">
+        <h1>博客論壇</h1>
+        <nav>
+            <a href="/create-user.html">創建用戶</a> |
+            <a href="/create-post.html">創建帖子</a> |
+            <a href="/create-tag.html">創建標籤</a> |
+            <a href="/create-category.html">創建類別</a>
+        </nav>
+
+        <!-- 搜尋結果 -->
+        <h2>標籤搜尋結果</h2>
+        <div id="search-results"></div>
+
+        <!-- 用戶列表 -->
+        <h2>用戶列表</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>用戶名</th>
+                    <th>電子郵件</th>
+                    <th>頭像</th>
+                </tr>
+            </thead>
+            <tbody id="users"></tbody>
+        </table>
+
+        <!-- 類別列表 -->
+        <h2>類別列表</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名稱</th>
+                </tr>
+            </thead>
+            <tbody id="categories"></tbody>
+        </table>
+
+        <!-- 帖子列表 -->
+        <h2>帖子列表</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>標題</th>
+                    <th>內容</th>
+                    <th>作者</th>
+                    <th>類別</th>
+                    <th>標籤</th>
+                    <th>點贊數</th>
+                </tr>
+            </thead>
+            <tbody id="posts"></tbody>
+        </table>
+
+        <!-- 標籤列表 -->
+        <h2>Hashtag 列表</h2>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名稱</th>
+                    <th>關聯帖子</th>
+                </tr>
+            </thead>
+            <tbody id="tags"></tbody>
+        </table>
+    </div>
+    <script type="module" src="/public/js/main.js"></script>
+</body>
+</html>
