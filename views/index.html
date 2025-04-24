@@ -1,30 +1,211 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog/Forum 首頁</title>
+    <title>部落格論壇</title>
     <link rel="stylesheet" href="/public/css/styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-
 <body>
-    <header>
-        <h1>Blog/Forum</h1>
-        <nav>
-            <a href="/index.html">首頁</a>
-            <a href="/create-post.html" id="create-post-link">創建貼文</a>
-            <a href="/manage-posts.html" id="manage-posts-link">管理貼文</a>
-            <a href="/create-user.html" id="register-link">註冊</a>
-            <a href="/login.html" id="login-link">登入</a>
-            <a href="#" id="logout-link" style="display: none;">登出</a>
-        </nav>
-    </header>
-    <main>
-        <div id="posts"></div>
-    </main>
-    <script src="/public/js/api.js"></script>
-    <script src="/public/js/main.js"></script>
-</body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/index">部落格論壇</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/index">首頁</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" id="myPostsBtn">我的文章</a>
+                    </li>
+                </ul>
+                <div class="navbar-nav">
+                    <button class="btn btn-outline-light" id="logoutBtn">登出</button>
+                </div>
+            </div>
+        </div>
+    </nav>
 
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">建立新文章</h5>
+                        <form id="createPostForm">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">標題</label>
+                                <input type="text" class="form-control" id="title" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="content" class="form-label">內容</label>
+                                <textarea class="form-control" id="content" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">發布文章</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="postsList">
+                    <!-- 文章列表將在這裡載入 -->
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">用戶資訊</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="userInfo">
+                            <!-- 用戶資訊將在這裡載入 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/navigation.js"></script>
+    <script>
+        // 檢查使用者是否已登入
+        if (!localStorage.getItem('token')) {
+            window.location.href = 'login.html';
+        }
+
+        // 載入文章
+        async function loadPosts() {
+            try {
+                const posts = await API.getPosts();
+                const postsList = document.getElementById('postsList');
+                postsList.innerHTML = posts.map(post => `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">${post.title}</h5>
+                            <p class="card-text">${post.content}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">作者：${post.user_id}</small>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="editPost('${post._id}')">編輯</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePost('${post._id}')">刪除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                alert('載入文章失敗：' + error.message);
+            }
+        }
+
+        // 載入用戶資訊
+        async function loadUserInfo() {
+            try {
+                // 這裡假設有一個 API 可以獲取當前登入用戶的資訊
+                // 如果沒有，可以從 localStorage 中獲取用戶名
+                const userInfo = document.getElementById('userInfo');
+                const username = localStorage.getItem('username') || '用戶';
+                userInfo.innerHTML = `
+                    <p><strong>用戶名：</strong> ${username}</p>
+                    <p><strong>電子郵件：</strong> ${localStorage.getItem('email') || '未提供'}</p>
+                `;
+            } catch (error) {
+                console.error('載入用戶資訊失敗：', error);
+            }
+        }
+
+        // 載入我的文章
+        async function loadMyPosts() {
+            try {
+                // 這裡假設有一個 API 可以獲取當前用戶的文章
+                // 如果沒有，可以使用現有的 getPosts API 並在前端過濾
+                const posts = await API.getPosts();
+                const myUserId = localStorage.getItem('userId');
+                const myPosts = posts.filter(post => post.user_id === myUserId);
+                
+                const postsList = document.getElementById('postsList');
+                postsList.innerHTML = myPosts.map(post => `
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title">${post.title}</h5>
+                            <p class="card-text">${post.content}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">作者：${post.user_id}</small>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="editPost('${post._id}')">編輯</button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deletePost('${post._id}')">刪除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                alert('載入我的文章失敗：' + error.message);
+            }
+        }
+
+        // 建立文章
+        document.getElementById('createPostForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            try {
+                await API.createPost({
+                    title: document.getElementById('title').value,
+                    content: document.getElementById('content').value
+                });
+                document.getElementById('title').value = '';
+                document.getElementById('content').value = '';
+                loadPosts();
+            } catch (error) {
+                alert('建立文章失敗：' + error.message);
+            }
+        });
+
+        // 編輯文章
+        async function editPost(postId) {
+            const newTitle = prompt('請輸入新標題：');
+            const newContent = prompt('請輸入新內容：');
+            if (newTitle && newContent) {
+                try {
+                    await API.updatePost(postId, {
+                        title: newTitle,
+                        content: newContent
+                    });
+                    loadPosts();
+                } catch (error) {
+                    alert('更新文章失敗：' + error.message);
+                }
+            }
+        }
+
+        // 刪除文章
+        async function deletePost(postId) {
+            if (confirm('確定要刪除這篇文章嗎？')) {
+                try {
+                    await API.deletePost(postId);
+                    loadPosts();
+                } catch (error) {
+                    alert('刪除文章失敗：' + error.message);
+                }
+            }
+        }
+
+        // 我的文章按鈕
+        document.getElementById('myPostsBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            loadMyPosts();
+        });
+
+        // 登出
+        document.getElementById('logoutBtn').addEventListener('click', logout);
+
+        // 頁面載入時載入文章和用戶資訊
+        loadPosts();
+        loadUserInfo();
+    </script>
+</body>
 </html>

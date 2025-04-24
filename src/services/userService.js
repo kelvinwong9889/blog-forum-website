@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { jwtSecret } = require('../config/env');
+require('dotenv').config();
 const userRepository = require('../repositories/userRepository');
 const { ERROR_MESSAGES } = require('../constants/errorMessages');
 
@@ -31,8 +31,8 @@ class UserService {
             error.status = 401;
             throw error;
         }
-        const token = jwt.sign({ id: user._id }, jwtSecret, { expiresIn: '1d' });
-        return { user: { id: user._id, username: user.username, email: user.email, avatar: user.avatar }, token };
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        return { token };
     }
 
     async getUserById(id) {

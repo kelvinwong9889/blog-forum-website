@@ -25,8 +25,8 @@ exports.login = async (req, res, next) => {
             email: req.body.email,
             password: req.body.password,
         };
-        const { user, token } = await userService.login(credentials);
-        res.status(200).json({ user, token });
+        const { token } = await userService.login(credentials);
+        res.status(200).json({ token });
     } catch (error) {
         next(error);
     }
