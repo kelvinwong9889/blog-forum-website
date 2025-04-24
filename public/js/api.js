@@ -1,43 +1,82 @@
-const API_BASE_URL = 'http://localhost:3000/api';
-
-async function apiRequest(endpoint, method = 'GET', data = null) {
-    const options = {
-        method,
-        headers: {
+const API = {
+    async request(method, endpoint, data = null, token = null) {
+        const headers = {
             'Content-Type': 'application/json',
-        },
-    };
-    if (data) {
-        options.body = JSON.stringify(data);
-    }
-    try {
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        };
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+        const options = {
+            method,
+            headers,
+        };
+        if (data) {
+            options.body = JSON.stringify(data);
+        }
+        const response = await fetch(`/api${endpoint}`, options);
         const result = await response.json();
         if (!response.ok) {
-            throw new Error(result.error?.message || 'API 請求失敗');
+            throw new Error(result.error || '請求失敗');
         }
         return result;
-    } catch (err) {
-        throw err;
-    }
-}
+    },
 
-export const createUser = (userData) => apiRequest('/users', 'POST', userData);
-export const getUser = (userId) => apiRequest(`/users/${userId}`);
-export const getUsers = () => apiRequest('/users');
-export const createPost = (postData) => apiRequest('/posts', 'POST', postData);
-export const getPost = (postId) => apiRequest(`/posts/${postId}`);
-export const getPosts = () => apiRequest('/posts');
-export const createComment = (commentData) => apiRequest('/comments', 'POST', commentData);
-export const getCommentsByPost = (postId) => apiRequest(`/comments/post/${postId}`);
-export const createCategory = (categoryData) => apiRequest('/categories', 'POST', categoryData);
-export const getCategory = (categoryId) => apiRequest(`/categories/${categoryId}`);
-export const getCategories = () => apiRequest('/categories');
-export const createHashtagWithPost = (hashtagData) => apiRequest('/hashtags/with-post', 'POST', hashtagData);
-export const getHashtag = (hashtagId) => apiRequest(`/hashtags/${hashtagId}`);
-export const getHashtags = () => apiRequest('/hashtags');
-export const createPostHashtag = (postHashtagData) => apiRequest('/post-hashtags', 'POST', postHashtagData);
-export const deletePostHashtag = (postHashtagData) => apiRequest('/post-hashtags', 'DELETE', postHashtagData);
-export const createLike = (likeData) => apiRequest('/likes', 'POST', likeData);
-export const getLikesByPost = (postId) => apiRequest(`/likes/post/${postId}`);
-export const createAndSearchHashtag = (hashtagData) => apiRequest('/hashtags/create-and-search', 'POST', hashtagData);
+    async register(data) {
+        return await this.request('POST', '/users/register', data);
+    },
+
+    async login(data) {
+        return await this.request('POST', '/users/login', data);
+    },
+
+    async getPosts(query = {}) {
+        const queryString = new URLSearchParams(query).toString();
+        return await this.request('GET', `/posts${queryString ? `?${queryString}` : ''}`);
+    },
+
+    async getPost(id) {
+        return await this.request('GET', `/posts/${id}`);
+    },
+
+    async createPost(data) {
+        return await this.request('POST', '/posts', data, localStorage.getItem('token'));
+    },
+
+    async updatePost(id, data) {
+        return await this.request('PUT', `/posts/${id}`, data, localStorage.getItem('token'));
+    },
+
+    async deletePost(id) {
+        return await this.request('DELETE', `/posts/${id}`, null, localStorage.getItem('token'));
+    },
+
+    async toggleLike(data) {
+        return await this.request('POST', '/likes', data, localStorage.getItem('token'));
+    },
+
+    async getLikesByPost(postId) {
+        return await this.request('GET', `/likes/post/${postId}`);
+    },
+
+    async getLikesByComment(commentId) {
+        return await this.request('GET', `/likes/comment/${commentId}`);
+    },
+
+    async createComment(data) {
+        return await this.request('POST', '/comments', data, localStorage.getItem('token'));
+    },
+
+    async getCommentsByPost(postId) {
+        return await this.request('GET', `/comments/post/${postId}`);
+    },
+
+    async deleteComment(id) {
+        return await this.request('DELETE', `/comments/${id}`, null, localStorage.getItem('token'));
+    },
+
+    async getCategories() {
+        return await this.request('GET', '/categories');
+    },
+};
+
+export default API;

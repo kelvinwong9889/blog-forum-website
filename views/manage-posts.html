@@ -4,27 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog/Forum 首頁</title>
+    <title>管理貼文</title>
     <link rel="stylesheet" href="/public/css/styles.css">
 </head>
 
 <body>
     <header>
-        <h1>Blog/Forum</h1>
+        <h1>Blog/Forum - 管理貼文</h1>
         <nav>
             <a href="/index.html">首頁</a>
-            <a href="/create-post.html" id="create-post-link">創建貼文</a>
-            <a href="/manage-posts.html" id="manage-posts-link">管理貼文</a>
+            <a href="/create-post.html">創建貼文</a>
             <a href="/create-user.html" id="register-link">註冊</a>
             <a href="/login.html" id="login-link">登入</a>
             <a href="#" id="logout-link" style="display: none;">登出</a>
         </nav>
     </header>
     <main>
+        <button id="delete-selected">刪除選中貼文</button>
         <div id="posts"></div>
     </main>
     <script src="/public/js/api.js"></script>
-    <script src="/public/js/main.js"></script>
+    <script src="/public/js/manage-posts.js"></script>
 </body>
 
 </html>
