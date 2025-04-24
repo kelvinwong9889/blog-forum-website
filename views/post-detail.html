@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog/Forum 首頁</title>
+    <title>貼文詳情</title>
     <link rel="stylesheet" href="/public/css/styles.css">
 </head>
 
 <body>
     <header>
-        <h1>Blog/Forum</h1>
+        <h1>Blog/Forum - 貼文詳情</h1>
         <nav>
             <a href="/index.html">首頁</a>
             <a href="/create-post.html" id="create-post-link">創建貼文</a>
@@ -21,10 +21,22 @@
         </nav>
     </header>
     <main>
-        <div id="posts"></div>
+        <div id="post-detail"></div>
+        <div id="like-section">
+            <button id="like-button">按讚</button>
+            <span id="like-count">0</span>
+        </div>
+        <div id="comment-section">
+            <h3>留言</h3>
+            <form id="comment-form">
+                <textarea id="comment-content" required></textarea>
+                <button type="submit">發布留言</button>
+            </form>
+            <div id="comments"></div>
+        </div>
     </main>
     <script src="/public/js/api.js"></script>
-    <script src="/public/js/main.js"></script>
+    <script src="/public/js/post-detail.js"></script>
 </body>
 
 </html>
