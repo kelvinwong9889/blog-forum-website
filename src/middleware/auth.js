@@ -1,22 +1,32 @@
 const jwt = require('jsonwebtoken');
-const { jwtSecret } = require('../config/env');
+require('dotenv').config();
+const User = require('../models/user');
 const { ERROR_MESSAGES } = require('../constants/errorMessages');
 
-module.exports = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');
+const authenticateToken = async (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    
     if (!token) {
-        const error = new Error(ERROR_MESSAGES.INVALID_TOKEN);
-        error.status = 401;
-        return next(error);
+        return res.status(401).json({ message: ERROR_MESSAGES.TOKEN_REQUIRED });
     }
 
     try {
-        const decoded = jwt.verify(token, jwtSecret);
-        req.user = decoded;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+        
+        if (!user) {
+            return res.status(401).json({ message: ERROR_MESSAGES.USER_NOT_FOUND });
+        }
+
+        req.user = user;
         next();
     } catch (error) {
-        const err = new Error(ERROR_MESSAGES.INVALID_TOKEN);
-        err.status = 401;
-        next(err);
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: ERROR_MESSAGES.TOKEN_EXPIRED });
+        }
+        return res.status(403).json({ message: ERROR_MESSAGES.TOKEN_INVALID });
     }
 };
+
+module.exports = authenticateToken;

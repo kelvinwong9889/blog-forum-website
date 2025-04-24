@@ -16,8 +16,16 @@ app.use('/public', express.static(path.join(__dirname, '../public')));
 app.use('/api', require('./routes/index'));
 
 // 靜態頁面
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../views', path.basename(req.path) || 'index.html'));
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../views/login.html'));
+});
+
+app.get('/register', (req, res) => {
+    res.sendFile(path.join(__dirname, '../views/register.html'));
+});
+
+app.get('/index', (req, res) => {
+    res.sendFile(path.join(__dirname, '../views/index.html'));
 });
 
 // 錯誤處理
